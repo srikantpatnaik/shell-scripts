@@ -1,31 +1,7 @@
 #!/bin/bash
 
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-# This program is intended to write/copy images to any media or drive. The
-# only dependency to this script is 'zenity'. In most of the GNOME based
-# desktops zenity will present, for other desktop environments you need to 
-# install it using your package manager. 
-
-## This script can download all relevant information from linked web pages 
-## recursively till the end of the content. I used it to download college
-## addresses and stored them in a csv file
-
-
 # URL of the first page (there are total 1700+ results in multiple pages)
-url='http://some-URL.html/'
+url='http://www.studyguideindia.com/Colleges/default.asp?Course=M-C-A-Colleges'
 
 # Bad practice(while true), but it will look for next page until it exists
 while true
@@ -43,12 +19,13 @@ while true
         # guaranteed trap of our desired <table> tag and its content which
         # is nothing but our college URLs in that page
         allURLs=$(w3m -no-cookie -dump_source $url \
-                | grep '<table align="center" width="99%"' -A1000\
-                | grep -m1 '</table>' -B1000 | grep -w href | cut -d '"' -f2)
+                | grep '<table align="center" width="99%"' -A1500\
+                | grep -m1 '</table>' -B1500 | grep -w Details | cut -d '"' -f2)
         # So now allURLs contain all MCA college URLs 
         for each in $allURLs
             do 
                 echo $each
+				w3m -no-cookie -dump_source  $each | grep  -m1 -A200 "College Name" > tmpHtml
                 # Similarly trapping the section of College detail,
                 # not with -dump_source but with -dump(text equivalent of html)
 
@@ -58,12 +35,32 @@ while true
 
                 # This could have been done better in one line if processed
                 # properly using regex
-                echo $(w3m -no-cookie -dump $each \
-                     | grep -m1 -A30 "College Name"| grep -m1 "E-Mail" -B30\
-                     | sed 's/ /_/g' | sed 's/_\+_/ /g' | sed 's/_\+,/,/g'\
-                     | sed 's/,\+_/,/g' | tr '\n' ';' | sed 's/\;\;/\n/g' \
-                     | sed 's/\; /,/g'| awk '{print $2}' | tr '\n' ';')\
-                     >> all-address.csv
+
+               ##  Next 6 statements will generate a csv file with all fields
+               # echo $(w3m -no-cookie -dump $each \
+               #      | grep -m1 -A30 "College Name"| grep -m1 "E-Mail" -B30\
+               #      | sed 's/ /_/g' | sed 's/_\+_/ /g' | sed 's/_\+,/,/g'\
+               #      | sed 's/,\+_/,/g' | tr '\n' ';' | sed 's/\;\;/\n/g' \
+               #      | sed 's/\; /,/g'| awk '{print $2}' | tr '\n' ';')\
+               #      >> mca.csv
+			   
+			   # College name
+			   cat tmpHtml | grep -A5 'College Name' | grep "<strong>"  \
+			   | awk -F '<strong>' '{print $2}' | awk -F '</strong>' '{print $1}'>>1.txt
+
+			   # Address 
+               cat tmpHtml | grep -A30 'START jOINING ADDRESS' | grep -B30 'END jOINING ADDRESS'\
+               | tail -n +2 | head -n -1 | sed s/\<br\>//g |  sed -e 's/^[ \t]*//'>>1.txt
+
+			   # Phone number
+			   cat tmpHtml | grep -A30 "Phone" | grep -m1 -A5 '<td align="left">'\
+               | grep -B5 '</td>' | head -n2 | tail -1 |  sed -e 's/^[ \t]*//'>>1.txt
+
+			   echo "
+
+-----------------------------------------------------------
+
+               ">>1.txt
             done
         # Explanation of last command ( url=$(w3m -no-cookie ...)    
         # In the first run it will take the first page's URL(available in the 
@@ -81,4 +78,6 @@ while true
             | grep -o '<a href=['"'"'"][^"'"'"']*['"'"'"]'\
             | tail -n1 | cut -d "'" -f 2)
     done
-
+ 	 rm tmpHtml
+     # This will make it 2 column, see man pr for more details, the only issue is ^M chars	
+	 pr -c -t -T -m -w 100 xaa xab > mca-college-addr-2-column.txt
