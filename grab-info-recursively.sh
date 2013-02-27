@@ -79,5 +79,7 @@ while true
             | tail -n1 | cut -d "'" -f 2)
     done
  	 rm tmpHtml
+	 # This will split 1.txt in two files so that `pr` command make 2 page layout
+	 split -l 14000 1.txt
      # This will make it 2 column, see man pr for more details, the only issue is ^M chars	
 	 pr -c -t -T -m -w 100 xaa xab > mca-college-addr-2-column.txt
