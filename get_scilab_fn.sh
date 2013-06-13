@@ -12,7 +12,7 @@ cat all_functions | grep  'class="refentry">' -A10000 | grep 'type="text/javascr
 
 for eachLetter in {a..z}
 	do
-	cat sorted.txt | grep -oi ^$eachLetter[a-zA-Z0-9_]* > $eachLetter.txt
+	cat final_list_of_all_fns | grep -oi ^$eachLetter[a-zA-Z0-9_]* > $eachLetter.txt
 	done
 
 rm all_functions
