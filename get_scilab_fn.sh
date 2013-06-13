@@ -10,4 +10,9 @@ sed -i "s/'class="list-refentry"><li>'/'class="list-refentry"><li>\n'/g" all_fun
 
 cat all_functions | grep  'class="refentry">' -A10000 | grep 'type="text/javascript"' -B100000 | grep -o 'class="refentry">[a-zA-Z0-9_]*' | cut -d '>' -f 2 | uniq | sed '/^$/d' | sed '/^_/d' > final_list_of_all_fns
 
+for eachLetter in {a..z}
+	do
+	cat sorted.txt | grep -oi ^$eachLetter[a-zA-Z0-9_]* > $eachLetter.txt
+	done
+
 rm all_functions
