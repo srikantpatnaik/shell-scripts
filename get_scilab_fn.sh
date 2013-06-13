@@ -8,7 +8,7 @@ w3m -no-cookie -dump_source http://help.scilab.org/docs/5.4.1/en_US/ > all_funct
 
 sed -i "s/'class="list-refentry"><li>'/'class="list-refentry"><li>\n'/g" all_functions
 
-cat all_functions | grep  'class="refentry">' -A10000 | grep 'type="text/javascript"' -B100000 | grep -o 'class="refentry">[a-zA-Z0-9_]*' | cut -d '>' -f 2 | uniq | sed '/^$/d' | sed '/^_/d' > final_list_of_all_fns
+cat all_functions | grep  'class="refentry">' -A10000 | grep 'type="text/javascript"' -B100000 | grep -o 'class="refentry">[a-zA-Z0-9_]*' | cut -d '>' -f 2 | uniq | sed '/^$/d' | sed '/^_/d'| sort -n | uniq  > final_list_of_all_fns
 
 for eachLetter in {a..z}
 	do
