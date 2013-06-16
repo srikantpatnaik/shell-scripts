@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # URL of the first page (there are total 1700+ results in multiple pages)
-url='http://www.studyguideindia.com/Colleges/default.asp?Course=M-C-A-Colleges'
+url='http://www.studyg**e*d*a.**m/Colleges/default.asp?Course=****'
 
 # Bad practice(while true), but it will look for next page until it exists
 while true
