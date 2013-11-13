@@ -83,3 +83,5 @@ while true
 	 split -l 14000 1.txt
      # This will make it 2 column, see man pr for more details, the only issue is ^M chars	
 	 pr -c -t -T -m -w 100 xaa xab > mca-college-addr-2-column.txt
+
+	#for each in {304..419}; do w3m -dump http://spoken-tutorial.iitb.ac.in/aicte/colleges/view/$each | tail -n +5 | grep -B10 'Pin Code' | cut -d ' ' -f 3- | sed 's/^\ *//g'; echo '--------------------------------------------------------------------'; done > maharashtra.txt && split -l 306 maharashtra.txt && pr -d -t -T -m -w 130 xaa xab > maharashtra-addr-2-column1.txt
