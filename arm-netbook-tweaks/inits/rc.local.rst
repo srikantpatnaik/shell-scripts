@@ -7,5 +7,5 @@ run as root, when system init finishes.
 Commands to disable resize in certain netbooks ::
 
 	cp /media/boot/scriptcmd.failsafe /media/boot/scriptcmd
-	echo "copied scriptcmd.failsafe to scriptcmd" >> /var/log/rc.local.log
+	echo "$(date +%d-%m-%Y_%T); copied scriptcmd.failsafe to scriptcmd" >> /var/log/rc.local.log
 
