@@ -1,5 +1,7 @@
 #!/system/bin/sh
 
+# To run this script, first ssh to Android using sshdroid or similar utility.
+# This step will stop android UI
 setprop ctl.stop media & setprop ctl.stop zygote & setprop ctl.stop surfaceflinger & setprop ctl.stop drm
 
 chroot_path="/data/linux"
@@ -7,6 +9,7 @@ export HOME=/root
 export HOSTNAME=netbook
 export DISPLAY=:0
 
+# Change the path with your root file system (it can be any distro, doesn't matter)
 mount /storage/sdcard1/14.04.1_rootfs.img $chroot_path
 
 start_mount()
@@ -33,4 +36,3 @@ start_mount()
 
         start_mount
         chroot $chroot_path /bin/bash "startx &"
-        chroot $chroot_path /bin/bash
