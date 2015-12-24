@@ -36,3 +36,5 @@ start_mount()
 
         start_mount
         chroot $chroot_path /bin/bash "startx &"
+
+# mount -o rw,remount /dev/block/mtdblock9 /system
