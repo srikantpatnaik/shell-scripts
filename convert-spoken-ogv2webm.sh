@@ -41,3 +41,42 @@
 # command to convert the file into 'webm'. Simple.
 
 ########################################################################
+ogvfile='source-ogvfile-paths.txt'
+webmfile='converted-webmfile-paths.txt'
+
+# Get the PATH of the running script
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+
+# Force user to enter only one arguement, i.e path of the video directory
+if [ $# -ne "1" ]; then
+    echo 'Provide path of your media directory as argument to this script.'
+    exit 0
+fi
+
+# Create text file with ogv file paths
+find $1 -iname \*.ogv > $DIR/$ogvfile
+
+checkForWebmConversion() {
+	# This $1 is different than command line argument.
+	# It is a function argument.
+    grep $1 $DIR/$ogvfile
+    # Check the return status of grep command. If '0' file converted, else not.
+	file_conversion_status=$(echo $?)
+
+}
+
+# Iterate over each line of the file and convert it to webm. Place the file
+# in the same directory
+for eachOgvFile in $(cat $DIR/$ogvfile); do
+    # Check whether the ogv file already converted. For this let's maintain
+    # a separate text file.
+    # The next function will handle this
+    checkForWebmConversion $eachOgvFile
+	if [ $file_conversion_status -eq "0" ]; then
+		echo file need to be converted
+	fi
+
+done
+
+
+
