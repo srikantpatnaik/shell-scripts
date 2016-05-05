@@ -1,24 +1,8 @@
 #!/bin/bash
 
-#######################################################################
-
-# License GNU GPLv3
-
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 # Author: Srikant Patnaik
 # srikant@fossee.in
+# License: GNU GPLv3
 
 ########################################################################
 
@@ -36,8 +20,11 @@
 
 ########################################################################
 
+sce_files_count=$(ls -1 *.sce | wc -l)
+cellCodeSeparatorCount=0
+
 file=1.ipynb
-rm $file
+echo -n > $file
 
 jsonHeader() {
 	echo '{' >> $file
@@ -47,11 +34,31 @@ cellHeader() {
 	echo '"cells": [' >> $file
 }
 
+nbTitle() {
+	echo ' {
+		   "cell_type": "markdown",
+	   "metadata": {},
+	   "source": [
+	    "# Chapter 2 ELECTROSTATIC POTENTIAL AND CAPACITANCE"
+	   ]
+	},' >> $file
+}
+
+cellTitle() {
+	echo  '{
+		   "cell_type": "markdown",
+		   "metadata": {},
+		   "source": [
+			"## Example 2.1; Page No 55"
+		   ]
+		  },' >> $file
+}
+
 cellCodeHeader() {
 	echo '  {' >> $file
 }
 
-cellCodeBody () {
+cellCodeBody() {
 	echo '"cell_type": "code",
 	   "execution_count": null,
 	   "metadata": {
@@ -67,14 +74,13 @@ cellCodeSourceHeader() {
 cellCodeSourceBody(){
 	IFS=$'\n';
 	rm .tmp
-	for each in $(cat 2.sce);
-		do
-			# replace " with ', add '\n",' at end of the line, add " at the beginning of the line
-			echo $each | sed "s|\"|\'|g" | sed 's|\x0D$|\\n",|' | sed 's|^|"|' >> .tmp ;
-		done
-	# Last line 'comma' and '\n' is not required
-	cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $file
-	
+			for line in $(cat $sceFile);
+				do
+					# replace " with ', add '\n",' at end of the line, add " at the beginning of the line
+					echo $line | sed "s|\"|\'|g" | sed 's|\x0D$|\\n",|' | sed 's|^|"|' >> .tmp ;
+				done
+			# Last line 'comma' and '\n' is not required
+			cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $file
 }
 
 cellCodeSourceFooter() {
@@ -85,9 +91,13 @@ cellCodeFooter() {
 	echo '   }' >> $file
 }
 
+
 cellCodeSeparator() {
-	# only call if you have multiple code cells
-	echo ',' >> $file 
+	# except the last cell
+	cellCodeSeparatorCount=$(($cellCodeSeparatorCount + 1))
+	if [ $cellCodeSeparatorCount -lt $sce_files_count ]; then
+			echo ',' >> $file 
+	fi
 }
 
 cellFooter() {
@@ -123,16 +133,27 @@ jsonFooter() {
 	echo '}' >> $file
 } 
 
-jsonHeader
-cellHeader
-cellCodeHeader
-cellCodeBody
-cellCodeSourceHeader
-cellCodeSourceBody
-cellCodeSourceFooter
-cellCodeFooter
-#cellCodeSeparator
-cellFooter
-metadata
-jsonFooter
+###############################################################################
 
+main() {
+		# constant events
+		jsonHeader
+		cellHeader
+		nbTitle
+		for sceFile in $(ls -1 *.sce);
+			do
+				cellTitle
+		    	cellCodeHeader
+				cellCodeBody
+				cellCodeSourceHeader
+				cellCodeSourceBody $sceFile
+				cellCodeSourceFooter
+				cellCodeFooter
+				cellCodeSeparator
+			done
+		cellFooter
+		metadata
+		jsonFooter
+}
+
+main
