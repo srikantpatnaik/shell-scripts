@@ -20,7 +20,6 @@
 
 ########################################################################
 
-sce_files_count=$(ls -1 *.sce | wc -l)
 cellCodeSeparatorCount=0
 
 file=1.ipynb
@@ -95,7 +94,8 @@ cellCodeFooter() {
 cellCodeSeparator() {
 	# except the last cell
 	cellCodeSeparatorCount=$(($cellCodeSeparatorCount + 1))
-	if [ $cellCodeSeparatorCount -lt $sce_files_count ]; then
+#	if [ $cellCodeSeparatorCount -lt $sceFilesCount ]; then
+	if [ $currentCount -lt $sceFilesCount ]; then
 			echo ',' >> $file 
 	fi
 }
@@ -136,24 +136,31 @@ jsonFooter() {
 ###############################################################################
 
 main() {
-		# constant events
-		jsonHeader
-		cellHeader
-		nbTitle
-		for sceFile in $(ls -1 *.sce);
-			do
-				cellTitle
-		    	cellCodeHeader
-				cellCodeBody
-				cellCodeSourceHeader
-				cellCodeSourceBody $sceFile
-				cellCodeSourceFooter
-				cellCodeFooter
-				cellCodeSeparator
+	for sceFilePath in $(find $1/ -mindepth 2 -maxdepth 2 -type d);
+		do
+			cd $sceFilePath
+			sceFilesCount=$(ls -1 *.sce | wc -l)
+			currentCount=0
+			jsonHeader
+			cellHeader
+			nbTitle
+				for sceFile in $(ls -1 *.sce);
+					do 
+						cellTitle
+				    	cellCodeHeader
+						cellCodeBody
+						cellCodeSourceHeader
+						cellCodeSourceBody $sceFile
+						cellCodeSourceFooter
+						cellCodeFooter
+						currentCount=$(($currentCount + 1))
+						cellCodeSeparator $sceFilesCount $currentCount
+					done
+				cellFooter
+				metadata
+				jsonFooter
+				cd ../../../
 			done
-		cellFooter
-		metadata
-		jsonFooter
-}
+		}
 
-main
+main $1
