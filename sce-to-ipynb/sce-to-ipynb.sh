@@ -20,17 +20,15 @@
 
 ########################################################################
 
-cellCodeSeparatorCount=0
-
 file=1.ipynb
-echo -n > $file
+#echo -n > $chapterName
 
 jsonHeader() {
-	echo '{' >> $file
+	echo '{' >> $chapterName
 }
 
 cellHeader() {
-	echo '"cells": [' >> $file
+	echo '"cells": [' >> $chapterName
 }
 
 nbTitle() {
@@ -38,9 +36,9 @@ nbTitle() {
 		   "cell_type": "markdown",
 	   "metadata": {},
 	   "source": [
-	    "# Chapter 2 ELECTROSTATIC POTENTIAL AND CAPACITANCE"
+       "# Chapter '$nbTitleName'"
 	   ]
-	},' >> $file
+	},' >> $chapterName
 }
 
 cellTitle() {
@@ -48,13 +46,13 @@ cellTitle() {
 		   "cell_type": "markdown",
 		   "metadata": {},
 		   "source": [
-			"## Example 2.1; Page No 55"
+			"## Example '$exampleName'"
 		   ]
-		  },' >> $file
+		  },' >> $chapterName
 }
 
 cellCodeHeader() {
-	echo '  {' >> $file
+	echo '  {' >> $chapterName
 }
 
 cellCodeBody() {
@@ -63,11 +61,11 @@ cellCodeBody() {
 	   "metadata": {
 	    "collapsed": true
 	   },
-	   "outputs": [],' >> $file
+	   "outputs": [],' >> $chapterName
 }
 
 cellCodeSourceHeader() {
-	echo '"source": [' >> $file
+	echo '"source": [' >> $chapterName
 }
 
 cellCodeSourceBody(){
@@ -79,29 +77,27 @@ cellCodeSourceBody(){
 					echo $line | sed "s|\"|\'|g" | sed 's|\x0D$|\\n",|' | sed 's|^|"|' >> .tmp ;
 				done
 			# Last line 'comma' and '\n' is not required
-			cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $file
+			cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $chapterName
 }
 
 cellCodeSourceFooter() {
-	echo '   ]' >> $file
+	echo '   ]' >> $chapterName
 }
 
 cellCodeFooter() {
-	echo '   }' >> $file
+	echo '   }' >> $chapterName
 }
 
 
 cellCodeSeparator() {
 	# except the last cell
-	cellCodeSeparatorCount=$(($cellCodeSeparatorCount + 1))
-#	if [ $cellCodeSeparatorCount -lt $sceFilesCount ]; then
 	if [ $currentCount -lt $sceFilesCount ]; then
-			echo ',' >> $file 
+			echo ',' >> $chapterName 
 	fi
 }
 
 cellFooter() {
-	echo '],' >> $file
+	echo '],' >> $chapterName
 }
 
 metadata() {
@@ -125,12 +121,12 @@ metadata() {
 		  }
 		 },
 		 "nbformat": 4,
-		 "nbformat_minor": 0' >> $file
+		 "nbformat_minor": 0' >> $chapterName
 
 }
 
 jsonFooter() {
-	echo '}' >> $file
+	echo '}' >> $chapterName
 } 
 
 ###############################################################################
@@ -141,23 +137,26 @@ main() {
 			cd $sceFilePath
 			sceFilesCount=$(ls -1 *.sce | wc -l)
 			currentCount=0
-			jsonHeader
-			cellHeader
-			nbTitle
+			chapterName=$(echo $sceFilePath | cut -d '/' -f 4).ipynb
+			nbTitleName=$(echo $sceFilePath | cut -d '/' -f 4 | sed 's/_/ /g' | sed 's/-/: /')
+			jsonHeader $chapterName
+			cellHeader $chapterName
+			nbTitle $chapterName $nbTitleName
 				for sceFile in $(ls -1 *.sce);
-					do 
-						cellTitle
-				    	cellCodeHeader
-						cellCodeBody
-						cellCodeSourceHeader
-						cellCodeSourceBody $sceFile
-						cellCodeSourceFooter
-						cellCodeFooter
+					do  
+						exampleName=$(echo $sceFile | sed 's/_/./' | sed 's/-/: /')
+						cellTitle $chapterName $exampleName
+				    	cellCodeHeader $chapterName
+						cellCodeBody $chapterName
+						cellCodeSourceHeader $chapterName 
+						cellCodeSourceBody $chapterName $sceFile
+						cellCodeSourceFooter $chapterName
+						cellCodeFooter $chapterName 
 						currentCount=$(($currentCount + 1))
-						cellCodeSeparator $sceFilesCount $currentCount
+						cellCodeSeparator $chapterName $sceFilesCount $currentCount
 					done
-				cellFooter
-				metadata
+				cellFooter $chapterName
+				metadata $chapterName
 				jsonFooter
 				cd ../../../
 			done
