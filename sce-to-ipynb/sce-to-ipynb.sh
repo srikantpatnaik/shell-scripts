@@ -3,33 +3,38 @@
 # Author: Srikant Patnaik
 # srikant@fossee.in
 # License: GNU GPLv3
+# Version: 0.1 beta
 
 ########################################################################
 
 # How to use?
+# ./sce-to-ipynb.sh dir-with-sce/
 
 ########################################################################
 
 # FAQ
 
-# What this script for?
-# It will convert the sce files in a directory into an ipynb file.
+# What is this script for?
+# It will convert the '.sce' files in a directory into ipynb file(s).
 
 # How it does?
-#
+# The ipynb is a json file with place holders for code, output, title
+# subtitle etc. Placing the content of sce file in the code section is
+# the starting point. 
 
 ########################################################################
 
-file=1.ipynb
-#echo -n > $chapterName
+# function calls to create a $chapterName.ipynb file 
 
 jsonHeader() {
 	echo '{' >> $chapterName
 }
 
+
 cellHeader() {
 	echo '"cells": [' >> $chapterName
 }
+
 
 nbTitle() {
 	echo ' {
@@ -41,6 +46,7 @@ nbTitle() {
 	},' >> $chapterName
 }
 
+
 cellTitle() {
 	echo  '{
 		   "cell_type": "markdown",
@@ -51,9 +57,11 @@ cellTitle() {
 		  },' >> $chapterName
 }
 
+
 cellCodeHeader() {
 	echo '  {' >> $chapterName
 }
+
 
 cellCodeBody() {
 	echo '"cell_type": "code",
@@ -64,9 +72,11 @@ cellCodeBody() {
 	   "outputs": [],' >> $chapterName
 }
 
+
 cellCodeSourceHeader() {
 	echo '"source": [' >> $chapterName
 }
+
 
 cellCodeSourceBody(){
 	IFS=$'\n';
@@ -74,15 +84,19 @@ cellCodeSourceBody(){
 			for line in $(cat $sceFile);
 				do
 					# replace " with ', add '\n",' at end of the line, add " at the beginning of the line
-					echo $line | sed "s|\"|\'|g" | sed 's|\x0D$|\\n",|' | sed 's|^|"|' >> .tmp ;
+					#echo $line | sed "s|\"|\'|g" | sed 's|\x0D$|\\n",|' | sed 's|^|"|' >> .tmp;
+					echo $line | sed "s|\"|\'|g" | sed 's|\x0D$||' | sed 's|$|\\n",|' | sed 's|^|"|' >> .tmp;
 				done
 			# Last line 'comma' and '\n' is not required
-			cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $chapterName
+			#cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $chapterName
+			cat .tmp | sed '$s/\,//g' | sed '$s/\\n"/"/g' >> $chapterName
 }
+
 
 cellCodeSourceFooter() {
 	echo '   ]' >> $chapterName
 }
+
 
 cellCodeFooter() {
 	echo '   }' >> $chapterName
@@ -96,9 +110,11 @@ cellCodeSeparator() {
 	fi
 }
 
+
 cellFooter() {
 	echo '],' >> $chapterName
 }
+
 
 metadata() {
 	echo '"metadata": {
@@ -125,6 +141,7 @@ metadata() {
 
 }
 
+
 jsonFooter() {
 	echo '}' >> $chapterName
 } 
@@ -135,14 +152,14 @@ main() {
 	for sceFilePath in $(find $1/ -mindepth 2 -maxdepth 2 -type d);
 		do
 			cd $sceFilePath
-			sceFilesCount=$(ls -1 *.sce | wc -l)
+			sceFilesCount=$(ls -1 *.sce *.sci | wc -l)
 			currentCount=0
-			chapterName=$(echo $sceFilePath | cut -d '/' -f 4).ipynb
-			nbTitleName=$(echo $sceFilePath | cut -d '/' -f 4 | sed 's/_/ /g' | sed 's/-/: /')
+			chapterName=$(echo $sceFilePath | cut -d '/' -f 3).ipynb
+			nbTitleName=$(echo $sceFilePath | cut -d '/' -f 3 | sed 's/_/ /g' | sed 's/-/: /')
 			jsonHeader $chapterName
 			cellHeader $chapterName
 			nbTitle $chapterName $nbTitleName
-				for sceFile in $(ls -1 *.sce);
+				for sceFile in $(ls -1 *.sce *.sci);
 					do  
 						exampleName=$(echo $sceFile | sed 's/_/./' | sed 's/-/: /')
 						cellTitle $chapterName $exampleName
@@ -162,4 +179,15 @@ main() {
 			done
 		}
 
-main $1
+#################################################################################
+
+# program starts here
+# calling main()
+
+if [ "$#" -ne 1 ]; then
+    echo "Please provide directory path of '.sce'files."
+else
+	main $1
+fi
+
+
