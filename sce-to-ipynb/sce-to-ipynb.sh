@@ -8,14 +8,18 @@
 ########################################################################
 
 # How to use?
-# ./sce-to-ipynb.sh dir-with-sce/dir-1/dir-2/1.sce
+
+# The present setup is hard coded for Scilab TBCs, but can be easily 
+# modified for generic behaviour 
+
+# ./sce-to-ipynb.sh dir-0/dir-1/dir-2/sce-files.sce
 
 ########################################################################
 
 # FAQ
 
 # What is this script for?
-# It will convert the '.sce' files in a directory into ipynb file(s).
+# It will convert the '.sce/.sci' files in a directory into ipynb file(s).
 
 # How it does?
 # The ipynb is a json file with place holders for code, output, title
@@ -84,12 +88,9 @@ cellCodeSourceBody(){
 			for line in $(cat $sceFile);
 				do
 					# replace " with ', add '\n",' at end of the line, add " at the beginning of the line
-					#echo $line | sed "s|\"|\'|g" | sed 's|\x0D$|\\n",|' | sed 's|^|"|' >> .tmp;
 					echo $line | sed "s|\"|\'|g" | sed 's|\x0D$||' | sed 's|$|\\n",|' | sed 's|^|"|' >> .tmp;
 				done
 			# Last line 'comma' and '\n' is not required
-			#cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $chapterName
-			#cat .tmp | sed '$s/\,//g' | sed '$s/\\n"/"/g' >> $chapterName
 			cat .tmp | sed '$s/\\n",/"/g' >> $chapterName
 }
 
@@ -155,8 +156,8 @@ main() {
 			cd $sceFilePath
 			sceFilesCount=$(ls -1 *.sce *.sci | wc -l)
 			currentCount=0
-			chapterName=$(echo $sceFilePath | cut -d '/' -f 3).ipynb
-			nbTitleName=$(echo $sceFilePath | cut -d '/' -f 3 | sed 's/_/ /g' | sed 's/-/: /')
+			chapterName=$(echo $sceFilePath | cut -d '/' -f 4).ipynb
+			nbTitleName=$(echo $sceFilePath | cut -d '/' -f 4 | sed 's/_/ /g' | sed 's/-/: /')
 			jsonHeader $chapterName
 			cellHeader $chapterName
 			nbTitle $chapterName $nbTitleName
@@ -164,7 +165,7 @@ main() {
 					do  
 						exampleName=$(echo $sceFile | sed 's/_/./' | sed 's/-/: /')
 						cellTitle $chapterName $exampleName
-				    	cellCodeHeader $chapterName
+					    	cellCodeHeader $chapterName
 						cellCodeBody $chapterName
 						cellCodeSourceHeader $chapterName 
 						cellCodeSourceBody $chapterName $sceFile
