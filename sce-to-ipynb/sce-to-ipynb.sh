@@ -187,7 +187,7 @@ main() {
 # calling main()
 
 if [ "$#" -ne 1 ]; then
-    echo "Please provide directory path of '.sce'files."
+    echo "Usage: './sce-to-ipynb.sh all-books/' where all books have all-books/book1/chap1/1.sce and so on"
 else
 	main $1
 fi
