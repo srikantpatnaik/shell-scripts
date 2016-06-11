@@ -8,7 +8,7 @@
 ########################################################################
 
 # How to use?
-# ./sce-to-ipynb.sh dir-with-sce/
+# ./sce-to-ipynb.sh dir-with-sce/dir-1/dir-2/1.sce
 
 ########################################################################
 
@@ -89,7 +89,8 @@ cellCodeSourceBody(){
 				done
 			# Last line 'comma' and '\n' is not required
 			#cat .tmp | sed '$s|.$||' | sed '$s|\\n||'>> $chapterName
-			cat .tmp | sed '$s/\,//g' | sed '$s/\\n"/"/g' >> $chapterName
+			#cat .tmp | sed '$s/\,//g' | sed '$s/\\n"/"/g' >> $chapterName
+			cat .tmp | sed '$s/\\n",/"/g' >> $chapterName
 }
 
 
