@@ -48,11 +48,22 @@ define() {
 		done
 }
 
+diagram() {
+	echo
+	echo -n "        " 
+	echo "var diagram = scicos_diagram();"
+	for line in $(grep -A1000 "scicos_diagram" $sciFile | tail -n +2);
+		do
+			echo $line | sed 's/objs([0-9]*)/objs\.push/g'
+		done
+
+}
 ###########################################################################
 #main starts here
 main() {
 	header
 	define
+	diagram
 }
 
 main
