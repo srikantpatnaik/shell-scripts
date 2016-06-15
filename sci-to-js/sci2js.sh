@@ -1,17 +1,28 @@
 #!/bin/bash
 
-sciFile=andblk.sci
-jsFile=js
+sciFile=andblk.sci #for debug only
+#sciFile=$1
+#jsFile=
 
 declare -A mapping=( ["orig"]="ScilabDouble"
 					 ["sz"]="ScilabDouble"
+					 ["gr_i"]="ScilabDouble"
 					 ["flip"]="ScilabBoolean"
+					 ["firing"]="ScilabBoolean"
+					 ["dep_ut"]="ScilabBoolean"
 					 ["pout"]="ScilabDouble"
+					 ["evtin"]="ScilabDouble"
+					 ["evtout"]="ScilabDouble"
 					 ["pein"]="ScilabDouble"
 					 ["peout"]="ScilabDouble"
 					 ["exprs"]="ScilabString"
 					 ["ipar"]="ScilabDouble"
+					 ["gui"]="ScilabString"
+					 ["blocktype"]="ScilabString"
+					 ["sim"]="ScilabString"
 					)
+
+###############################################################################
 
 header() {
 	echo "function " | tr -d '\n'
@@ -19,13 +30,14 @@ header() {
 	echo "() {"
 }
 
+###############################################################################
+
 define() {
 	IFS=$'\n';
 	for line in $(tail -n +3 $sciFile);
 		do
 			if echo $line | grep -q "define";
 				then
-					echo
 					echo -n "        var " 
 					echo -n $line | tr -d ' '
 					echo  ';' 
@@ -48,9 +60,10 @@ define() {
 		done
 }
 
+###############################################################################
+
 diagram() {
 	echo
-	#echo -n "        " 
 	echo "var diagram = scicos_diagram();"
 	for line in $(grep -A1000 "scicos_diagram" $sciFile | tail -n +2);
 		do
@@ -79,15 +92,53 @@ diagram() {
 			fi
 			echo 
 		done
+}
 
+###############################################################################
+
+block() {
+	IFS=$'\n';
+	echo
+	echo -n "        "
+	echo "var x = scicos_block();"
+	for line in $(grep -A1000 "scicos_block()" $sciFile );
+		do
+			if echo $line | grep -q "end"; then break;fi
+			#	echo $line
+				for key in "${!mapping[@]}";
+					do 
+						if echo $line | grep -q $key;
+							then
+								echo $line | cut -d "=" -f 1 | tr -d '\n' 
+								echo " = new " | tr -d '\n'
+								echo ${mapping[$key]} | tr -d '\n'
+								echo "(" | tr -d '\n'
+								echo $line | cut -d "=" -f 2 | tr -d '\n'
+								echo ")" | tr -d '\n'
+								echo ";"
+						fi
+					done
+		done
+	echo -n "        "
+	echo -n "x.model.rpar = diagram;"
+    echo "return new BasicBlock(attributes, x.model.rpar, x.graphics.exprs);"
+	echo '}'	
+}
+
+jugaad() {
+sed -i 's/\ );//g' $sciFile.js
 }
 
 ###########################################################################
-#main starts here
+
 main() {
 	header
 	define
 	diagram
+	block	
 }
 
-main
+main > $sciFile.js
+
+#embarrassing
+jugaad 
