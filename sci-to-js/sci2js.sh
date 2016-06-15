@@ -54,15 +54,44 @@ diagram() {
 	echo "var diagram = scicos_diagram();"
 	for line in $(grep -A1000 "scicos_diagram" $sciFile | tail -n +2);
 		do
-			echo $line | sed 's/objs([0-9]*)/objs\.push/g'
+			if echo $line | grep -q "scicos_block"; then break;fi
+			if echo $line | grep -q 'scicos_link';
+				then
+		    #		echo -n "        " 
+					scicosLinks=$(echo -n $line | sed 's/objs([0-9]*)/objs\.push(/g' | sed 's/=//')
+					scicosVarsCount=$(echo -n $scicosLinks | grep -o "=" | wc -l)
+					scicosVars=$(echo $scicosLinks  | cut -d '(' -f 3- | sed 's/)//')
+					echo -n  $scicosLinks | cut -d '(' -f -2 | tr -d '\n'
+					echo '({'
+					IFS=$'#';
+					increment=1;
+					scicosVarsCount=1
+					echo $scicosVars | grep -o "[a-z]*\=\[[0-9,;.-]*\]" | cut -d '=' -f 1-
+					while [ $scicosVarsCount -gt 0 ]; do 					
+						scicosVarsCount=$(($scicosVarsCount - 1))
+						for each in $(echo $scicosVars | grep -o "[a-z]*\=\[[0-9,;.-]*\]" | cut -d '=' -f 1-); 
+						do 
+							firstHalf=$(echo -n $each | tr '\n' '#' | cut -d '#' -f $increment | cut -d '=' -f 1 | tr -d '\n')
+			#				echo $each | tr '\n' '#' | cut -d '#' -f $increment | cut -d '=' -f 1 						
+							increment=$(($increment + 1))
+							#echo $increment
+					 	done
+					done
+			else 
+				echo -n "        " 
+				echo -n $line | sed 's/objs([0-9]*)/objs\.push(/g' | sed 's/=//' 
+				echo -n ');'
+			fi
+			echo 
 		done
 
 }
+
 ###########################################################################
 #main starts here
 main() {
-	header
-	define
+	#header
+	#define
 	diagram
 }
 
