@@ -1,7 +1,7 @@
 #!/bin/bash
 
-sciFile=andblk.sci #for debug only
-#sciFile=$1
+#sciFile=andblk.sci #for debug only
+sciFile=$1
 #jsFile=
 
 declare -A mapping=( ["orig"]="ScilabDouble"
@@ -132,13 +132,18 @@ sed -i 's/\ );//g' $sciFile.js
 ###########################################################################
 
 main() {
-	header
-	define
-	diagram
-	block	
-}
+	header  
+	define  
+	diagram 
+	block
+} > $sciFile.js
 
-main > $sciFile.js
+if [ "$#" -ne 1 ]; then
+   	echo "Usage: './sci2js.sh file.sci'"
+	exit
+else
+	main
+fi
 
 #embarrassing
 jugaad 
