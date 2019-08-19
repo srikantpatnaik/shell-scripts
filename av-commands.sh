@@ -26,14 +26,14 @@
 # http://www.incenp.org/notes/2012/video-cropping.html
 # To obtain the coordinates use mplayer.
 # Create a ~/.mplayer/crop and add the following
-# 1 change_rectangle 2  10
-# 2 change_rectangle 2 -10
-# 3 change_rectangle 3 -10
-# 4 change_rectangle 3  10
-# 5 change_rectangle 0  10
-# 6 change_rectangle 0 -10
-# 7 change_rectangle 1  10
-# 8 change_rectangle 1 -10
+RIGHT change_rectangle 2  10
+LEFT  change_rectangle 2 -10
+UP    change_rectangle 3 -10
+DOWN  change_rectangle 3  10
+2   change_rectangle 0  10
+4   change_rectangle 0 -10
+6   change_rectangle 1  10
+8   change_rectangle 1 -10
 # To view and scale visually using mplayer with keyboard shortcuts (1 to 8).
 #mplayer -vf rectangle -input conf=crop video.webm
 
