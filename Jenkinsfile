@@ -55,7 +55,7 @@ pipeline {
                     //docker_app_image = docker.build("${ARTIFACTORY_REPO}/${REPO_NAME}:$GIT_TAG", "--no-cache=true -f ${dockerfile} .")      
                     echo "GIT_TAG insde Build container Image -> If condition 'Build container Image'=$GIT_TAG"
 
-                    }
+                    //}
                   }
                   else
                   {
