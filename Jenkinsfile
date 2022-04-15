@@ -1,6 +1,6 @@
 #!/usr/bin/env groovy
 
-@Library("global-jenkins-library@master") _
+//@Library("global-jenkins-library@master") _
 
 pipeline {
     agent any
@@ -23,7 +23,7 @@ pipeline {
            }
         
           steps{
-              git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
+              git url: "$GIT_URL", branch: "$BRANCH_NAME"
             script {
 	     	echo "$REPO_NAME"
 		sh "git log | head -n20"
