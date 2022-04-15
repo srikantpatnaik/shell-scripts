@@ -27,7 +27,7 @@ pipeline {
             script {
 	     	echo "$REPO_NAME"
 		sh "git log | head -n20"
-		sh "git describe --tags"
+		sh "git describe --tags || true"
 		sh "pwd"
                 GIT_TAG = sh(script: 'git tag --contains|head -n 1|tr -d \'\n\'', returnStdout: true)
                 if (GIT_TAG.isEmpty())
