@@ -17,15 +17,15 @@ pipeline {
 
     stages {
 
- /*         stage("SCM Checkout"){
+          stage("SCM Checkout"){
            environment {
-             REPO_NAME = sh(script: 'echo $GIT_URL | rev | cut -d \'/\' -f1 | rev | cut -d \'.\' -f1|tr -d \'\n\'', returnStdout: true)
+             //REPO_NAME = sh(script: 'echo $GIT_URL | rev | cut -d \'/\' -f1 | rev | cut -d \'.\' -f1|tr -d \'\n\'', returnStdout: true)
            }
         
           steps{
               git url: "$GIT_URL", branch: "$BRANCH_NAME"
             script {
-	     	echo "$REPO_NAME"
+	     	//echo "$REPO_NAME"
 		sh "git log | head -n20"
 		sh "git describe --tags || true"
 		sh "pwd"
@@ -39,7 +39,7 @@ pipeline {
                 }
              }
           }
-*/
+
         stage("Build Container Image"){
             //when {
             //    tag "*"
