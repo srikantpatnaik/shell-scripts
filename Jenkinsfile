@@ -41,11 +41,11 @@ pipeline {
           }
 */
         stage("Build Container Image"){
-             when {
-                tag "*"
-             }
+            //when {
+            //    tag "*"
+            // }
             steps {
-		git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
+		//git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
                 script {
                 GIT_TAG = sh(script: 'git tag --contains|head -n 1|tr -d \'\n\'', returnStdout: true)
                   echo "GIT_TAG insde 'Build container Image'=$GIT_TAG"
