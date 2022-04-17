@@ -19,7 +19,7 @@ pipeline {
 
           stage("SCM Checkout"){
            environment {
-             //REPO_NAME = sh(script: 'echo $GIT_URL | rev | cut -d \'/\' -f1 | rev | cut -d \'.\' -f1|tr -d \'\n\'', returnStdout: true)
+             REPO_NAME = sh(script: 'echo $GIT_URL | rev | cut -d \'/\' -f1 | rev | cut -d \'.\' -f1|tr -d \'\n\'', returnStdout: true)
            }
         
           steps{
