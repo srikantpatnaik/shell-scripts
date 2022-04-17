@@ -17,7 +17,7 @@ pipeline {
 
     stages {
 
-          stage("SCM Checkout"){
+        /*  stage("SCM Checkout"){
            environment {
              REPO_NAME = sh(script: 'echo $GIT_URL | rev | cut -d \'/\' -f1 | rev | cut -d \'.\' -f1|tr -d \'\n\'', returnStdout: true)
            }
@@ -39,7 +39,7 @@ pipeline {
                 }
              }
           }
-
+*/
         stage("Build Container Image"){
             //when {
             //    tag "*"
