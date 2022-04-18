@@ -17,7 +17,7 @@ pipeline {
 
     stages {
 
-          stage("Get repo name"){
+          stage("SCM Checkout"){
            environment {
              REPO_NAME = sh(script: 'echo $GIT_URL | rev | cut -d \'/\' -f1 | rev | cut -d \'.\' -f1|tr -d \'\n\'', returnStdout: true)
            }
@@ -25,7 +25,7 @@ pipeline {
           steps{
               //git url: "$GIT_URL", branch: "$BRANCH_NAME"
             script {
-	     	//echo "$REPO_NAME"
+	     	echo "$REPO_NAME"
 		sh "git log | head -n20"
 		sh "git describe --tags || true"
 		sh "pwd"
@@ -41,9 +41,9 @@ pipeline {
           }
 
         stage("Build Container Image"){
-            //when {
-            //    tag "*"
-            // }
+            when {
+                tag "*"
+             }
             steps {
 		//git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
                 script {
