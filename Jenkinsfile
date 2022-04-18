@@ -49,6 +49,7 @@ pipeline {
                 script {
                 GIT_TAG = sh(script: 'git tag --contains|head -n 1|tr -d \'\n\'', returnStdout: true)
                   echo "GIT_TAG insde 'Build container Image'=$GIT_TAG"
+		  echo env.BRANCH_NAME
                   if (env.BRANCH_NAME == 'main' && GIT_TAG != 'NA') {
                     //docker.withRegistry("https://${ARTIFACTORY_REPO}", ARTIFACTORY_CREDS) {
                     //dockerfile = 'Dockerfile'
