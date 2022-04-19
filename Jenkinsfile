@@ -26,6 +26,7 @@ pipeline {
               //git url: "$GIT_URL", branch: "$BRANCH_NAME"
             script {
 	     	echo "$REPO_NAME"
+		sh "printev"
 		sh "git log | head -n20"
 		sh "git describe --tags || true"
 		sh "pwd"
