@@ -162,9 +162,12 @@ pipeline {
           }*/
          steps {
            script {
-             if (env.BRANCH_NAME == 'main' || GIT_TAG != 'NA') {
-             String VERSION = getVersion()
-		echo "inside helm stage: $VERSION"
+             if (GIT_TAG != 'NA') {
+		print "GIT_TAG is $GIT_TAG"
+		}
+	     else if ( env.BRANCH_NAME == 'main') {
+	             String VERSION = getVersion()
+		     print "inside else if with 'main' branch: $VERSION"
             /*withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'helm-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {                          
               sh  "helm repo add rbi-helm ${HELM_REPO_URL} --username ${env.USERNAME} --password ${env.PASSWORD}"
               sh  "sed \"s/latest/${GIT_TAG}/g\" ./chart/values.yaml -i"
