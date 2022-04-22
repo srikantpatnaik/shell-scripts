@@ -60,7 +60,7 @@ pipeline {
                   if (GIT_TAG != 'NA') {
 			print "Build container image: inside if: GIT_TAG =$GIT_TAG"
 		}
-		else if (env.BRANCH_NAME == "main"); {
+		else if (env.BRANCH_NAME == 'main') {
                     String VERSION = getVersion()
 		    print "Build container image: inside else if: VERSION =$VERSION"
 		   /* docker.withRegistry("https://${ARTIFACTORY_REPO}", ARTIFACTORY_CREDS) {
