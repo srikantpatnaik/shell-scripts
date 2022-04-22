@@ -27,7 +27,7 @@ pipeline {
               //git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
             script {
                 GIT_TAG = sh(script: 'git tag --contains|head -n 1|tr -d \'\n\'', returnStdout: true)
-		echo "SCM Checkout: GIT_TAG is $GIT_TAG"
+		print "SCM Checkout: GIT_TAG is $GIT_TAG"
                 if (GIT_TAG.isEmpty())
                 {
                   GIT_TAG='NA'
@@ -55,8 +55,8 @@ pipeline {
         stage("Build Container Image"){
             steps {
                 script {
-                  echo "Git tag is = $GIT_TAG"
-		  echo "Build ID is = $BUILD_ID"
+                  print "Git tag is = $GIT_TAG"
+		  print "Build ID is = $BUILD_ID"
                   if (GIT_TAG != 'NA') {
 			print "Build container image: inside if: GIT_TAG =$GIT_TAG"
 		}
@@ -170,7 +170,7 @@ pipeline {
 		}
 	     else if ( env.BRANCH_NAME == 'main') {
 	             String VERSION = getVersion()
-		     print "inside else if with 'main' branch: $VERSION"
+		     print "Helm: inside else if with 'main' branch VERSION = $VERSION"
             /*withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'helm-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {                          
               sh  "helm repo add rbi-helm ${HELM_REPO_URL} --username ${env.USERNAME} --password ${env.PASSWORD}"
               sh  "sed \"s/latest/${GIT_TAG}/g\" ./chart/values.yaml -i"
