@@ -166,7 +166,7 @@ pipeline {
          steps {
            script {
              if (GIT_TAG != 'NA') {
-		print "GIT_TAG is $GIT_TAG"
+		print "Helm: inside if GIT_TAG = $GIT_TAG"
 		}
 	     else if ( env.BRANCH_NAME == 'main') {
 	             String VERSION = getVersion()
