@@ -149,8 +149,9 @@ pipeline {
       }
 */
       stage("Helm"){
-         agent {
-            docker {
+         /*agent {
+            
+	     docker {
                 image 'alpine/helm:3.5.4'
                 args '-u root -i --entrypoint='
 
@@ -158,7 +159,7 @@ pipeline {
              }
           environment {
             HELM_REPO_URL = "https://us-artifactory.cicd.cloud.fpdev.io/artifactory/rbi-helm"
-          }
+          }*/
          steps {
            script {
              if (env.BRANCH_NAME == 'main' || GIT_TAG != 'NA') {
