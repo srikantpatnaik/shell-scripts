@@ -59,7 +59,7 @@ pipeline {
 		  echo "Build ID is = $BUILD_ID"
                   if (env.BRANCH_NAME == 'main' || GIT_TAG != 'NA') {
                     String GIT_TAG = getVersion()
-		    echo $GIT_TAG
+		    print "$GIT_TAG"
 		   /* docker.withRegistry("https://${ARTIFACTORY_REPO}", ARTIFACTORY_CREDS) {
                     dockerfile = 'Dockerfile'
                     docker_app_image = docker.build("${ARTIFACTORY_REPO}/${REPO_NAME}:$GIT_TAG", "--no-cache=true -f ${dockerfile} .")       
