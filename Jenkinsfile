@@ -63,8 +63,9 @@ pipeline {
 		   /* docker.withRegistry("https://${ARTIFACTORY_REPO}", ARTIFACTORY_CREDS) {
                     dockerfile = 'Dockerfile'
                     docker_app_image = docker.build("${ARTIFACTORY_REPO}/${REPO_NAME}:$GIT_TAG", "--no-cache=true -f ${dockerfile} .")       
-		  */
+		  
                     }
+		  */
                   }
                   else
                   {
