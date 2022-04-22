@@ -27,7 +27,7 @@ pipeline {
               //git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
             script {
                 GIT_TAG = sh(script: 'git tag --contains|head -n 1|tr -d \'\n\'', returnStdout: true)
-		echo "SCM Checkout: $GIT_TAG"
+		echo "SCM Checkout: GIT_TAG is $GIT_TAG"
                 if (GIT_TAG.isEmpty())
                 {
                   GIT_TAG='NA'
@@ -57,9 +57,12 @@ pipeline {
                 script {
                   echo "Git tag is = $GIT_TAG"
 		  echo "Build ID is = $BUILD_ID"
-                  if (env.BRANCH_NAME == 'main' || GIT_TAG != 'NA') {
+                  if (GIT_TAG != 'NA') {
+			print "Build container image: inside if: GIT_TAG =$GIT_TAG"
+		}
+		else if (env.BRANCH_NAME == "main"); {
                     String VERSION = getVersion()
-		    print "$VERSION"
+		    print "Build container image: inside else if: VERSION =$VERSION"
 		   /* docker.withRegistry("https://${ARTIFACTORY_REPO}", ARTIFACTORY_CREDS) {
                     dockerfile = 'Dockerfile'
                     docker_app_image = docker.build("${ARTIFACTORY_REPO}/${REPO_NAME}:$GIT_TAG", "--no-cache=true -f ${dockerfile} .")       
