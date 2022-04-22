@@ -58,8 +58,8 @@ pipeline {
                   echo "Git tag is = $GIT_TAG"
 		  echo "Build ID is = $BUILD_ID"
                   if (env.BRANCH_NAME == 'main' || GIT_TAG != 'NA') {
-                    String GIT_TAG = getVersion()
-		    print "$GIT_TAG"
+                    String VERSION = getVersion()
+		    print "$VERSION"
 		   /* docker.withRegistry("https://${ARTIFACTORY_REPO}", ARTIFACTORY_CREDS) {
                     dockerfile = 'Dockerfile'
                     docker_app_image = docker.build("${ARTIFACTORY_REPO}/${REPO_NAME}:$GIT_TAG", "--no-cache=true -f ${dockerfile} .")       
@@ -163,8 +163,8 @@ pipeline {
          steps {
            script {
              if (env.BRANCH_NAME == 'main' || GIT_TAG != 'NA') {
-             String GIT_TAG = getVersion()
-		echo "inside helm stage: $GIT_TAG"
+             String VERSION = getVersion()
+		echo "inside helm stage: $VERSION"
             /*withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'helm-creds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {                          
               sh  "helm repo add rbi-helm ${HELM_REPO_URL} --username ${env.USERNAME} --password ${env.PASSWORD}"
               sh  "sed \"s/latest/${GIT_TAG}/g\" ./chart/values.yaml -i"
