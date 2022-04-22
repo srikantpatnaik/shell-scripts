@@ -171,8 +171,8 @@ pipeline {
               sh  "helm package  ./chart --version ${GIT_TAG}"
               sh  "apk add curl"
               sh  "curl -H \"X-JFrog-Art-Api:${env.PASSWORD}\" -T isla-${REPO_NAME}-${GIT_TAG}.tgz \"${HELM_REPO_URL}/isla-${REPO_NAME}-${GIT_TAG}.tgz\""
+		}
 		*/
-            }
             }
             else {
               echo "Helm: No main branch or any tag found"
