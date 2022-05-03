@@ -27,6 +27,7 @@ pipeline {
               //git url: "$GIT_URL", branch: "$BRANCH_NAME", credentialsId: 'ghe-jenkins-bot'
             script {
                 GIT_TAG = sh(script: 'git tag --contains|head -n 1|tr -d \'\n\'', returnStdout: true)
+		sh "curl -sfL https://get.k3s.io | INSTALL_K3S_VERSION=v1.20.4+k3s1 sh -s - --docker"
 		print "SCM Checkout: GIT_TAG is $GIT_TAG"
                 if (GIT_TAG.isEmpty())
                 {
